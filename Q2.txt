@@ -1,0 +1,40 @@
+bool hasCircularDependency(int n, vector<vector<int>>& edges) {
+     vector<vector<int>> adj(n);
+    vector<int> inDegree(n, 0);
+    
+    for (auto& edge : edges) {
+        int node = edge[0];
+        int child = edge[1];
+        adj[node].push_back(child);
+        inDegree[child]++;
+    }
+    
+     queue<int> q;
+    for (int i = 0; i < n; i++) {
+        if (inDegree[i] == 0) {
+            q.push(i);
+        }
+    }
+    
+    int processedNodes = 0;
+    
+     while (!q.empty()) {
+        int current = q.front();
+        q.pop();
+        processedNodes++;
+        
+        for (int neighbor : adj[current]) {
+            inDegree[neighbor]--;
+            if (inDegree[neighbor] == 0) {
+                q.push(neighbor);
+            }
+        }
+    }
+    
+     return processedNodes != n;
+}
+
+EXPLAINATION : 
+I used Kahn's algorithm (topological sorting) to detect cycles in the dependency graph.If we can successfully perform a topological sort on all nodes, then no cycle exists. 
+If we get stuck and can't process all nodes, there must be a cycle.
+
